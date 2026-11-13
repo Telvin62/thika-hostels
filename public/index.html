@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html><head><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Thika Hostels - Book Now</title>
+<style>
+body{font-family:sans-serif;background:#f2f2f2;margin:0;padding:15px}
+h1{text-align:center;color:#1a73e8}
+.card{background:white;border-radius:12px;padding:15px;margin:12px 0;box-shadow:0 2px 8px #ccc}
+.card h3{margin:5px 0}
+button{background:#1a73e8;color:white;border:none;padding:10px 18px;border-radius:8px;font-size:16px;width:100%}
+input{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
+.price{color:green;font-weight:bold;font-size:18px}
+</style></head>
+<body>
+<h1>🏠 Thika Hostels</h1>
+<p style="text-align:center">Book your hostel in Thika - by Telvin Asher Abel</p>
+<div id="hostels">Loading...</div>
+<script>
+async function load(){
+  let r = await fetch('/api/hostels');
+  let data = await r.json();
+  let html = '';
+  data.forEach(h=>{
+    html += `<div class="card"><div style="font-size:40px">${h.image}</div><h3>${h.name}</h3><p>📍 ${h.location}</p><p class="price">KSh ${h.price} / month</p><p>🛏️ ${h.available} rooms available</p><input id="name${h.id}" placeholder="Your Full Name"><input id="phone${h.id}" placeholder="M-Pesa Phone e.g 0769751803"><button onclick="book(${h.id},${h.price})">Book Now + Pay with M-Pesa</button><p id="msg${h.id}"></p></div>`;
+  });
+  document.getElementById('hostels').innerHTML = html;
+}
+async function book(id, price){
+  let name = document.getElementById('name'+id).value;
+  let phone = document.getElementById('phone'+id).value;
+  if(!name || !phone){ alert('Fill name and phone!'); return; }
+  let r = await fetch('/api/bookings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hostelId:id,name,phone})});
+  let d = await r.json();
+  if(d.booking){
+    let p = await fetch('/api/payments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bookingId:d.booking.id,phone,amount:price})});
+    let pd = await p.json();
+    document.getElementById('msg'+id).innerHTML = '✅ '+d.message+'<br>💚 '+pd.message+'<br>Booking ID: '+d.booking.id;
+    load();
+  } else { document.getElementById('msg'+id).innerHTML = d.message; }
+}
+load();
+</script></body></html>
