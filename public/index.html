@@ -1,103 +1,80 @@
-<!DOCTYPE html>
-<html><head><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Thika Hostels - Book Now</title>
-<style>
-body{font-family:sans-serif;background:#f2f2f2;margin:0;padding:15px}
-h1{text-align:center;color:#1a73e8}
-.card{background:white;border-radius:12px;padding:15px;margin:12px 0;box-shadow:0 2px 8px #ccc}
-.card h3{margin:5px 0}
-button{background:#1a73e8;color:white;border:none;padding:10px 18px;border-radius:8px;font-size:16px;width:100%}
-input{width:100%;padding:10px;margin:6px 0;border:1px solid #ccc;border-radius:8px;box-sizing:border-box}
-.price{color:green;font-weight:bold;font-size:18px}
-</style></head>
-<body>
-<h1>🏠 Thika Hostels</h1>
-<p style="text-align:center">Book your hostel in Thika - by Telvin Asher Abel</p>
-<div id="hostels">Loading...</div>
-<script>
-async function load(){
-  let r = await fetch('/api/hostels');
-  let data = await r.json();
-  let html = '';
-  data.forEach(h=>{
-    html += `<div class="card"><div style="font-size:40px">${h.image}</div><h3>${h.name}</h3><p>📍 ${h.location}</p><p class="price">KSh ${h.price} / month</p><p>🛏️ ${h.available} rooms available</p><input id="name${h.id}" placeholder="Your Full Name"><input id="phone${h.id}" placeholder="M-Pesa Phone e.g 0769751803"><button onclick="book(${h.id},${h.price})">Book Now + Pay with M-Pesa</button><p id="msg${h.id}"></p></div>`;
-  });
-  document.getElementById('hostels').innerHTML = html;
-}
-async function book(id, price){
-  let name = document.getElementById('name'+id).value;
-  let phone = document.getElementById('phone'+id).value;
-  if(!name || !phone){ alert('Fill name and phone!'); return; }
-  let r = await fetch('/api/bookings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({hostelId:id,name,phone})});
-  let d = await r.json();
-  if(d.booking){
-    let p = await fetch('/api/payments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bookingId:d.booking.id,phone,amount:price})});
-    let pd = await p.json();
-    let waMsg=encodeURIComponent('Hi! I want to book Hostel ID '+id+'. My name is '+name+', my M-Pesa number is '+phone+'. Booking ID: '+d.booking.id);  document.getElementById('msg'+id).innerHTML = '✅ '+d.message+'<br>💚 '+pd.message+'<br>Booking ID: '+d.booking.id;
-    load();
-  } else { document.getElementById('msg'+id).innerHTML = d.message; }
-}
-load();
-</script>
-<!-- WHATSAPP + TEST PAYMENT -->
-<style>
-#waBtn{position:fixed;bottom:85px;right:20px;background:#25D366;color:#fff;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;text-decoration:none;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3)}
-#payBox{display:none;position:fixed;bottom:80px;left:20px;background:#fff;border:2px solid #111;border-radius:12px;padding:12px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2);max-width:240px}
-#payBox button{width:100%;margin:4px 0;padding:10px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
-</style>
-<a id="waBtn" href="https://wa.me/254716921326?text=Hi!%20I%20want%20to%20book%20a%20hostel%20in%20Thika" target="_blank">💬</a>
-<script>
-function payMpesa(){
- let phone = prompt("Enter M-Pesa number for TEST (e.g 0716921326):","0716921326");
- if(!phone) return;
- document.getElementById('payMsg').innerHTML = "Sending TEST STK Push to "+phone+"...";
- setTimeout(()=>{ document.getElementById('payMsg').innerHTML = "TEST SUCCESS! M-Pesa STK Push Sent to "+phone+"<br>No real money was charged."; },1500);
-}
-function payCash(){ document.getElementById('payMsg').innerHTML = "Booked! Pay Cash on Arrival. We will confirm on WhatsApp."; }
-function payWa(){  }
-</script>
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thika Hostels</title></head>
+<body style="font-family:sans-serif;background:#f6f6f6;margin:0;padding-bottom:80px">
+<h1 style="text-align:center;padding:20px 10px 0">🏠 Thika Hostels</h1>
+<p style="text-align:center;color:#555">Book your hostel in Thika - by Telvin Asher Abel</p>
 
-
+<div style="background:#fff;border-radius:16px;padding:16px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)">
+<div style="font-size:40px">🌅</div>
+<h2 style="margin:8px 0">Sunrise Hostel Thika</h2>
+<p>📍 Thika Town</p>
+<p style="color:green;font-weight:bold;font-size:18px">KSh 3500 / month</p>
+<p>🛏️ 11 rooms available</p>
+<input placeholder="Your Full Name" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<input placeholder="M-Pesa Phone e.g 0769751803" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<button onclick="book(this,'Sunrise Hostel Thika','3500')" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:16px">Book Now + Pay with M-Pesa</button>
+</div>
+<div style="background:#fff;border-radius:16px;padding:16px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)">
+<div style="font-size:40px">🌿</div>
+<h2 style="margin:8px 0">Green View Hostel</h2>
+<p>📍 Near MKU</p>
+<p style="color:green;font-weight:bold;font-size:18px">KSh 4000 / month</p>
+<p>🛏️ 5 rooms available</p>
+<input placeholder="Your Full Name" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<input placeholder="M-Pesa Phone e.g 0769751803" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<button onclick="book(this,'Green View Hostel','4000')" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:16px">Book Now + Pay with M-Pesa</button>
+</div>
+<div style="background:#fff;border-radius:16px;padding:16px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)">
+<div style="font-size:40px">💰</div>
+<h2 style="margin:8px 0">Budget Stay</h2>
+<p>📍 Thika Road</p>
+<p style="color:green;font-weight:bold;font-size:18px">KSh 2500 / month</p>
+<p>🛏️ 18 rooms available</p>
+<input placeholder="Your Full Name" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<input placeholder="M-Pesa Phone e.g 0769751803" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<button onclick="book(this,'Budget Stay','2500')" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:16px">Book Now + Pay with M-Pesa</button>
+</div>
+<div style="background:#fff;border-radius:16px;padding:16px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)">
+<div style="font-size:40px">🏫</div>
+<h2 style="margin:8px 0">MKU Heights</h2>
+<p>📍 Opposite MKU Gate</p>
+<p style="color:green;font-weight:bold;font-size:18px">KSh 4500 / month</p>
+<p>🛏️ 20 rooms available</p>
+<input placeholder="Your Full Name" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<input placeholder="M-Pesa Phone e.g 0769751803" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<button onclick="book(this,'MKU Heights','4500')" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:16px">Book Now + Pay with M-Pesa</button>
+</div>
+<div style="background:#fff;border-radius:16px;padding:16px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)">
+<div style="font-size:40px">🏟️</div>
+<h2 style="margin:8px 0">Thika Gateway</h2>
+<p>📍 Near Thika Stadium</p>
+<p style="color:green;font-weight:bold;font-size:18px">KSh 3000 / month</p>
+<p>🛏️ 32 rooms available</p>
+<input placeholder="Your Full Name" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<input placeholder="M-Pesa Phone e.g 0769751803" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<button onclick="book(this,'Thika Gateway','3000')" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:16px">Book Now + Pay with M-Pesa</button>
+</div>
+<div style="background:#fff;border-radius:16px;padding:16px;margin:14px;box-shadow:0 2px 10px rgba(0,0,0,.08)">
+<div style="font-size:40px">⭐</div>
+<h2 style="margin:8px 0">Excel Hostel</h2>
+<p>📍 Section 9, Thika</p>
+<p style="color:green;font-weight:bold;font-size:18px">KSh 5000 / month</p>
+<p>🛏️ 8 rooms available</p>
+<input placeholder="Your Full Name" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<input placeholder="M-Pesa Phone e.g 0769751803" style="width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:10px;box-sizing:border-box">
+<button onclick="book(this,'Excel Hostel','5000')" style="width:100%;padding:14px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-weight:bold;font-size:16px">Book Now + Pay with M-Pesa</button>
+</div>
+<a href="https://wa.me/254716921326?text=Hi!%20I%20want%20to%20book%20a%20hostel" target="_blank" style="position:fixed;bottom:20px;right:20px;width:56px;height:56px;background:#25D366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:999">💬</a>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('button').forEach(btn => {
-    if(btn.textContent.includes('Book Now')){
-      // Find hostel name from same card
-      let card = btn.closest('div') || document.body;
-      let name = 'Hostel';
-      let all = card.parentElement ? card.parentElement.innerText : '';
-      let m = all.match(/(Sunrise Hostel Thika|Green View Hostel|Budget Stay|MKU Heights|Thika Gateway|Excel Hostel)/);
-      if(m) name = m[1];
-      // Find price too
-      let price = '3500';
-      let pm = all.match(/KSh\s*(\d+)/);
-      if(pm) price = pm[1];
-      btn.onclick = (e) => {
-        e.preventDefault();
-        let inputs = card.parentElement.querySelectorAll('input');
-        let fullName = inputs[0] ? inputs[0].value : '';
-        let phone = inputs[1] ? inputs[1].value : '';
-        if(!fullName) fullName = prompt('Your Full Name:') || 'Guest';
-        if(!phone) phone = prompt('M-Pesa Phone:') || '0716921326';
-        if(confirm('Pay KSh ' + price + ' for ' + name + ' via M-Pesa TEST to ' + phone + '?')){
-          
-  let method = prompt('Choose Payment Method for ' + name + ' - KSh ' + price + ':\n1 = M-Pesa STK Push\n2 = M-Pesa Till / Paybill\n3 = Cash on Arrival\n\nType 1, 2 or 3:');
-  if(method === '1'){
-    alert('✅ M-Pesa STK Push Sent to ' + phone + ' for ' + name + ' - KSh ' + price + '.\nCheck your phone and enter PIN.\nNo real money charged in TEST mode.');
-  } else if(method === '2'){
-    alert('Pay via M-Pesa Till:\nTill Number: 0716921326\nAmount: KSh ' + price + '\nName: ' + name + '\n\nSend and keep SMS as proof.');
-  } else if(method === '3'){
-    alert('Cash on Arrival selected for ' + name + ' - KSh ' + price + '.\nYour room is reserved for ' + fullName + ' (' + phone + '). Pay when you arrive.');
-  } else {
-    alert('Booking cancelled.');
-  }
-  
-          
-        }
-      };
-    }
-  });
-});
-</script>
-
-</body></html>
+function book(btn,name,price){
+  let card=btn.parentElement;
+  let inputs=card.querySelectorAll('input');
+  let fullName=inputs[0].value.trim();
+  let phone=inputs[1].value.trim();
+  if(!fullName){ alert('Please enter your Full Name first'); inputs[0].focus(); return; }
+  if(!phone){ alert('Please enter your M-Pesa Phone first'); inputs[1].focus(); return; }
+  let m=prompt('PAYMENT METHOD for '+name+' - KSh '+price+'\n\n1 = M-Pesa STK Push (PIN on your phone)\n2 = M-Pesa Till Number\n3 = Cash on Arrival\n\nType 1, 2 or 3:');
+  if(m==='1'){ alert('✅ TEST SUCCESS! M-Pesa STK Push Sent to '+phone+' for '+name+' - KSh '+price+'.\nCheck your phone and enter PIN.\nNo real money charged.'); }
+  else if(m==='2'){ alert('Pay via M-Pesa Till:\nTill: 0716921326\nAmount: KSh '+price+'\nFor: '+name+'\nName: '+fullName+'\nKeep SMS as proof.'); }
+  else if(m==='3'){ alert('Cash on Arrival selected.\nRoom reserved for '+fullName+' ('+phone+') - '+name+' KSh '+price+'. Pay when you arrive.'); }
+}
+</script></body></html>
