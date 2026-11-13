@@ -6,14 +6,15 @@ app.use(express.json());
 app.use(express.static('public'));
 
 let BOOKINGS = [];
-let VACANCIES = { "Sunrise": 10, "Sunset": 8, "Riverside": 12, "Green View": 10 };
+let VACANCIES = { "Sunrise Hostel Thika": 11, "Green View Hostel": 9, "Sunset Hostel": 8, "Riverside Hostel": 12 };
 try { if(fs.existsSync('vacancies.json')) VACANCIES = JSON.parse(fs.readFileSync('vacancies.json','utf8')); } catch(e){}
 try { if(fs.existsSync('bookings.json')) BOOKINGS = JSON.parse(fs.readFileSync('bookings.json','utf8')); } catch(e){}
 
 app.post('/api/book', (req,res)=>{
   BOOKINGS.push(req.body);
   // Try to find hostel name in booking message and reduce vacancy
-  for(let k in VACANCIES){ if((req.body.msg||'').toLowerCase().includes(k.toLowerCase())){ if(VACANCIES[k]>0) VACANCIES[k]--; } }
+  let hName = req.body.hostel || req.body.msg || '';
+   for(let k in VACANCIES){ if(hName.toLowerCase().includes(k.toLowerCase().split(' ')[0].toLowerCase()) || hName.includes(k)){ if(VACANCIES[k]>0) VACANCIES[k]--; } }
   try { fs.writeFileSync('vacancies.json', JSON.stringify(VACANCIES)); } catch(e){}
   try { fs.writeFileSync('bookings.json', JSON.stringify(BOOKINGS)); } catch(e){}
   console.log('🔔 NEW BOOKING:', req.body.msg);
