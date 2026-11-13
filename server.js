@@ -13,7 +13,6 @@ let hostels = [
 ];
 let bookings = [{id:1, hostelId:1, name:"Asher Abel", phone:"0769751803", date:"2026-11-13"}];
 
-app.get('/', (req,res)=>res.json({message:"Hostel Booking API is working!"}));
 app.get('/api/hostels', (req,res)=>res.json(hostels));
 app.get('/api/bookings', (req,res)=>res.json(bookings));
 
@@ -33,4 +32,4 @@ app.post('/api/payments', (req,res)=>{
   res.json({message:"M-Pesa STK Push Sent!", checkoutId:"WS_CO_"+Date.now(), bookingId, phone, amount, status:"SUCCESS - Payment Received"});
 });
 
-app.listen(5000, ()=>console.log('Server running on port 5000'));
+app.listen(process.env.PORT || 5000, ()=>console.log('Server running on port 5000'));
