@@ -33,7 +33,7 @@ async function book(id, price){
   if(d.booking){
     let p = await fetch('/api/payments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bookingId:d.booking.id,phone,amount:price})});
     let pd = await p.json();
-    let waMsg=encodeURIComponent('Hi! I want to book Hostel ID '+id+'. My name is '+name+', my M-Pesa number is '+phone+'. Booking ID: '+d.booking.id); window.open('https://wa.me/254769751803?text='+waMsg,'_blank'); document.getElementById('msg'+id).innerHTML = '✅ '+d.message+'<br>💚 '+pd.message+'<br>Booking ID: '+d.booking.id;
+    let waMsg=encodeURIComponent('Hi! I want to book Hostel ID '+id+'. My name is '+name+', my M-Pesa number is '+phone+'. Booking ID: '+d.booking.id);  document.getElementById('msg'+id).innerHTML = '✅ '+d.message+'<br>💚 '+pd.message+'<br>Booking ID: '+d.booking.id;
     load();
   } else { document.getElementById('msg'+id).innerHTML = d.message; }
 }
@@ -54,7 +54,7 @@ function payMpesa(){
  setTimeout(()=>{ document.getElementById('payMsg').innerHTML = "TEST SUCCESS! M-Pesa STK Push Sent to "+phone+"<br>No real money was charged."; },1500);
 }
 function payCash(){ document.getElementById('payMsg').innerHTML = "Booked! Pay Cash on Arrival. We will confirm on WhatsApp."; }
-function payWa(){ window.open("https://wa.me/254716921326?text=Hi!%20I%20want%20to%20pay%20for%20my%20hostel%20booking","_blank"); }
+function payWa(){  }
 </script>
 
 
@@ -80,8 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!fullName) fullName = prompt('Your Full Name:') || 'Guest';
         if(!phone) phone = prompt('M-Pesa Phone:') || '0716921326';
         if(confirm('Pay KSh ' + price + ' for ' + name + ' via M-Pesa TEST to ' + phone + '?')){
-          alert('✅ TEST SUCCESS! M-Pesa STK Push Sent to ' + phone + ' for ' + name + ' - KSh ' + price + '. No real money charged.');
-          window.open('https://wa.me/254716921326?text=' + encodeURIComponent('Hi! New Booking: ' + fullName + ' - ' + phone + ' - ' + name + ' - KSh ' + price + ' - TEST PAID'), '_blank');
+          
+  let method = prompt('Choose Payment Method for ' + name + ' - KSh ' + price + ':\n1 = M-Pesa STK Push\n2 = M-Pesa Till / Paybill\n3 = Cash on Arrival\n\nType 1, 2 or 3:');
+  if(method === '1'){
+    alert('✅ M-Pesa STK Push Sent to ' + phone + ' for ' + name + ' - KSh ' + price + '.\nCheck your phone and enter PIN.\nNo real money charged in TEST mode.');
+  } else if(method === '2'){
+    alert('Pay via M-Pesa Till:\nTill Number: 0716921326\nAmount: KSh ' + price + '\nName: ' + name + '\n\nSend and keep SMS as proof.');
+  } else if(method === '3'){
+    alert('Cash on Arrival selected for ' + name + ' - KSh ' + price + '.\nYour room is reserved for ' + fullName + ' (' + phone + '). Pay when you arrive.');
+  } else {
+    alert('Booking cancelled.');
+  }
+  
+          
         }
       };
     }
