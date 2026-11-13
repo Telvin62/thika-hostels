@@ -77,4 +77,31 @@ function book(btn,name,price){
   else if(m==='2'){ alert('Pay via M-Pesa Till:\nTill: 0716921326\nAmount: KSh '+price+'\nFor: '+name+'\nName: '+fullName+'\nKeep SMS as proof.'); }
   else if(m==='3'){ alert('Cash on Arrival selected.\nRoom reserved for '+fullName+' ('+phone+') - '+name+' KSh '+price+'. Pay when you arrive.'); }
 }
-</script></body></html>
+</script>
+<script>
+// SILENT BOOKING + VACANCY - auto hook
+async function sendSilentBooking(){
+  try{
+    let name = (document.querySelector('input[placeholder*=Name]')||{}).value || document.querySelector('#name')?.value || 'Customer';
+    let phone = (document.querySelector('input[placeholder*=Phone]')||{}).value || document.querySelector('#phone')?.value || '';
+    let hostel = document.querySelector('h2')?.innerText || document.title || 'Hostel';
+    // Try to get hostel from page - look for selected hostel name in text
+    let bodyText = document.body.innerText;
+    let msg = 'New booking: ' + name + ', ' + phone + ', ' + hostel;
+    let priceEl = document.body.innerText.match(/KSh\s*[0-9,]+/);
+    await fetch('/api/book', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({msg: msg, price: priceEl ? priceEl[0] : '', payment: 'M-Pesa', time: new Date().toLocaleString()})});
+    console.log('Booking sent silently');
+  }catch(e){ console.log('silent fail', e); }
+}
+document.addEventListener('click', (e)=>{
+  let t = (e.target.innerText||'').toLowerCase();
+  if(t.includes('book') || t.includes('confirm') || t.includes('pay')){ sendSilentBooking(); }
+});
+async function loadVac(){
+  try{ let r = await fetch('/api/vacancies'); let v = await r.json();
+    document.querySelectorAll('*').forEach(el=>{ if(el.children.length===0 && el.innerText && el.innerText.toLowerCase().includes('vacan')){ for(let k in v){ if(el.innerText.includes(k)) el.innerText = k + ' - ' + v[k] + ' rooms left'; } } });
+  }catch(e){}
+}
+loadVac();
+</script>
+</body></html>
