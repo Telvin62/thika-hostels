@@ -46,13 +46,6 @@ load();
 #payBox button{width:100%;margin:4px 0;padding:10px;border:none;border-radius:8px;font-weight:bold;cursor:pointer}
 </style>
 <a id="waBtn" href="https://wa.me/254716921326?text=Hi!%20I%20want%20to%20book%20a%20hostel%20in%20Thika" target="_blank">💬</a>
-<button id="payToggle" style="width:auto !important;min-width:90px;max-width:130px" onclick="document.getElementById('payBox').style.display = document.getElementById('payBox').style.display==='block'?'none':'block'" style="position:fixed;bottom:20px;left:20px;background:#111;color:#fff;padding:12px 16px;border:none;border-radius:25px;font-weight:bold;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3)">💳 Pay</button><div id="payBox">
-<b>💳 Pay (TEST MODE)</b><br><small>No real money moves</small><br>
-<button style="background:#4CAF50;color:#fff" onclick="payMpesa()">M-Pesa (Test)</button>
-<button style="background:#FFC107" onclick="payCash()">Cash on Arrival</button>
-<button style="background:#25D366;color:#fff" onclick="payWa()">Pay via WhatsApp</button>
-<div id="payMsg" style="font-size:13px;margin-top:6px"></div>
-</div>
 <script>
 function payMpesa(){
  let phone = prompt("Enter M-Pesa number for TEST (e.g 0716921326):","0716921326");
@@ -62,6 +55,38 @@ function payMpesa(){
 }
 function payCash(){ document.getElementById('payMsg').innerHTML = "Booked! Pay Cash on Arrival. We will confirm on WhatsApp."; }
 function payWa(){ window.open("https://wa.me/254716921326?text=Hi!%20I%20want%20to%20pay%20for%20my%20hostel%20booking","_blank"); }
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('button').forEach(btn => {
+    if(btn.textContent.includes('Book Now')){
+      // Find hostel name from same card
+      let card = btn.closest('div') || document.body;
+      let name = 'Hostel';
+      let all = card.parentElement ? card.parentElement.innerText : '';
+      let m = all.match(/(Sunrise Hostel Thika|Green View Hostel|Budget Stay|MKU Heights|Thika Gateway|Excel Hostel)/);
+      if(m) name = m[1];
+      // Find price too
+      let price = '3500';
+      let pm = all.match(/KSh\s*(\d+)/);
+      if(pm) price = pm[1];
+      btn.onclick = (e) => {
+        e.preventDefault();
+        let inputs = card.parentElement.querySelectorAll('input');
+        let fullName = inputs[0] ? inputs[0].value : '';
+        let phone = inputs[1] ? inputs[1].value : '';
+        if(!fullName) fullName = prompt('Your Full Name:') || 'Guest';
+        if(!phone) phone = prompt('M-Pesa Phone:') || '0716921326';
+        if(confirm('Pay KSh ' + price + ' for ' + name + ' via M-Pesa TEST to ' + phone + '?')){
+          alert('✅ TEST SUCCESS! M-Pesa STK Push Sent to ' + phone + ' for ' + name + ' - KSh ' + price + '. No real money charged.');
+          window.open('https://wa.me/254716921326?text=' + encodeURIComponent('Hi! New Booking: ' + fullName + ' - ' + phone + ' - ' + name + ' - KSh ' + price + ' - TEST PAID'), '_blank');
+        }
+      };
+    }
+  });
+});
 </script>
 
 </body></html>
