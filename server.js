@@ -1,35 +1,26 @@
 const express = require('express');
+const fs = require('fs');
 const app = express();
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-let hostels = [
-  {id:1, name:"Sunrise Hostel Thika", location:"Thika Town", price:3500, rooms:20, available:11, image:"🌅"},
-  {id:2, name:"Green View Hostel", location:"Near MKU", price:4000, rooms:15, available:5, image:"🌿"},
-  {id:3, name:"Budget Stay", location:"Thika Road", price:2500, rooms:30, available:18, image:"💰"},
-  {id:4, name:"MKU Heights", location:"Opposite MKU Gate", price:4500, rooms:25, available:20, image:"🏫"},
-  {id:5, name:"Thika Gateway", location:"Near Thika Stadium", price:3000, rooms:40, available:32, image:"🏟️"},
-  {id:6, name:"Excel Hostel", location:"Section 9, Thika", price:5000, rooms:12, available:8, image:"⭐"}
-];
-let bookings = [{id:1, hostelId:1, name:"Asher Abel", phone:"0769751803", date:"2026-11-13"}];
+let BOOKINGS = [];
+try { if(fs.existsSync('bookings.json')) BOOKINGS = JSON.parse(fs.readFileSync('bookings.json','utf8')); } catch(e){}
 
-app.get('/api/hostels', (req,res)=>res.json(hostels));
-app.get('/api/bookings', (req,res)=>res.json(bookings));
-
-app.post('/api/bookings', (req,res)=>{
-  const {hostelId, name, phone} = req.body;
-  const hostel = hostels.find(h=>h.id==hostelId);
-  if(!hostel) return res.json({message:"Hostel not found"});
-  if(hostel.available<=0) return res.json({message:"No rooms left"});
-  hostel.available--;
-  const booking = {id:bookings.length+1, hostelId, name, phone, date:new Date()};
-  bookings.push(booking);
-  res.json({message:"Booked successfully!", booking, hostel});
+app.post('/api/book', (req,res)=>{
+  BOOKINGS.push(req.body);
+  try { fs.writeFileSync('bookings.json', JSON.stringify(BOOKINGS)); } catch(e){}
+  console.log('🔔 NEW BOOKING:', req.body.msg);
+  res.json({ok:true});
 });
 
-app.post('/api/payments', (req,res)=>{
-  const {bookingId, phone, amount} = req.body;
-  res.json({message:"M-Pesa STK Push Sent!", checkoutId:"WS_CO_"+Date.now(), bookingId, phone, amount, status:"SUCCESS - Payment Received"});
+app.get('/bookings', (req,res)=>{
+  if(req.query.pass !== 'telvin123'){
+    return res.send('<body style="font-family:sans-serif;display:flex;justify-content:center;padding:40px;background:#f6f6f6"><form style="background:#fff;padding:24px;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.1);width:100%;max-width:320px"><h2>🔒 Owner Only</h2><p>Enter password to see bookings</p><input name="pass" type="password" placeholder="Password" style="width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;box-sizing:border-box"><button style="width:100%;padding:12px;margin-top:10px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:bold">View Bookings</button></form></body>');
+  }
+  let rows = BOOKINGS.map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>KSh '+(b.price||'')+'</td><td>'+(b.payment||'')+'</td><td>'+(b.time||'')+'</td></tr>').join('') || '<tr><td colspan=5 style="text-align:center;padding:20px">No bookings yet - try a test booking first</td></tr>';
+  res.send('<body style="font-family:sans-serif;background:#f6f6f6;padding:16px"><h1>🏠 Thika Hostels - Bookings ('+BOOKINGS.length+')</h1><table border=1 cellpadding=10 cellspacing=0 style="width:100%;background:#fff;border-collapse:collapse"><tr style="background:#111;color:#fff"><th>#</th><th>Booking</th><th>Amount</th><th>Payment</th><th>Time</th></tr>'+rows+'</table></body>');
 });
 
-app.listen(process.env.PORT || 5000, ()=>console.log('Server running on port 5000'));
+app.listen(PORT, ()=> console.log('Server on ' + PORT));
