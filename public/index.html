@@ -33,7 +33,7 @@ async function book(id, price){
   if(d.booking){
     let p = await fetch('/api/payments',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({bookingId:d.booking.id,phone,amount:price})});
     let pd = await p.json();
-    document.getElementById('msg'+id).innerHTML = '✅ '+d.message+'<br>💚 '+pd.message+'<br>Booking ID: '+d.booking.id;
+    let waMsg=encodeURIComponent('Hi! I want to book Hostel ID '+id+'. My name is '+name+', my M-Pesa number is '+phone+'. Booking ID: '+d.booking.id); window.open('https://wa.me/254769751803?text='+waMsg,'_blank'); document.getElementById('msg'+id).innerHTML = '✅ '+d.message+'<br>💚 '+pd.message+'<br>Booking ID: '+d.booking.id;
     load();
   } else { document.getElementById('msg'+id).innerHTML = d.message; }
 }
