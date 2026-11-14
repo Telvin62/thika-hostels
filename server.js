@@ -48,7 +48,19 @@ app.get('/bookings', (req,res)=>{
     sessionStorage.setItem('owner','yes'); sessionStorage.setItem('pass',p);
     showBookings(d);
   }
-  function showBookings(d){
+  
+async function confirmPay(i){
+  let p = sessionStorage.getItem('pass');
+  if(!p){ alert('Please login again'); return; }
+  try{
+    let r = await fetch('/api/confirm?pass='+encodeURIComponent(p),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idx:i,pass:p})});
+    let d = await r.json();
+    if(d.ok){ alert('Marked PAID ✅'); location.reload(); }
+    else alert('Failed: '+(d.error||'Unknown'));
+  }catch(e){ alert('Network error: '+e); }
+}
+
+function showBookings(d){
     document.getElementById('login').style.display='none'; document.getElementById('main').style.display='block';
     document.getElementById('vac').innerText = 'Vacancies: ' + JSON.stringify(d.vacancies||{});
     let rows = (d.bookings||[]).map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>'+(b.price||'')+'</td><td>'+(b.time||'')+'</td><td>'+(b.status||'PENDING')+'</td><td>'+(b.status==='PAID'?'✅ PAID':'<button onclick=confirmPay('+i+') style=width:auto;padding:6px>Confirm</button>')+'</td></tr>').join('') || '<tr><td colspan=4 style="text-align:center">No bookings yet</td></tr>';
