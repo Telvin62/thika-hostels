@@ -45,7 +45,6 @@ app.get('/bookings', (req,res)=>{
   </script></body></html>`);
 });
     document.getElementById('rows').innerHTML=(d.bookings||[]).map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>KSh '+(b.price||'')+'</td><td>'+(b.payment||'M-Pesa')+'</td><td>'+(b.time||'')+'</td></tr>').join('') || '<tr><td colspan=5 style="text-align:center">No bookings yet</td></tr>';
-  }
   function doLogout(){ sessionStorage.removeItem('owner'); sessionStorage.removeItem('pass'); document.getElementById('main').style.display='none'; document.getElementById('login').style.display='block'; document.getElementById('pass').value=''; document.getElementById('err').innerText='Logged out ✅'; }
   (async()=>{ if(sessionStorage.getItem('owner')==='yes'){ let p=sessionStorage.getItem('pass'); let r=await fetch('/api/bookings?pass='+encodeURIComponent(p)); let d=await r.json(); if(!d.error) show(d); } })();
   </script></body></html>`);
