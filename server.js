@@ -6,8 +6,8 @@ app.use(express.json());
 app.use(express.static('public'));
 
 let BOOKINGS = [];
-let VACANCIES = { "Sunrise": 50, "Green View": 48, "Sunset": 45, "Riverside": 47 };
-const PRICES = { "Sunrise": 5000, "Green View": 5500, "Sunset": 6000, "Riverside": 6500 };
+let VACANCIES = { "Sunrise": 50, "Green View Hostel": 48, "Budget Stay": 45, "MKU Heights": 47, "Thika Gateway": 46, "Excel Hostel": 44 };
+const PRICES = { "Sunrise": 5500, "Green View Hostel": 6000, "Green View": 6000, "Budget Stay": 4500, "MKU Heights": 6500, "Thika Gateway": 5000, "Excel Hostel": 7000, "Excel": 7000 };
 try { if(fs.existsSync('vacancies.json')) VACANCIES = JSON.parse(fs.readFileSync('vacancies.json','utf8')); } catch(e){}
 try { if(fs.existsSync('bookings.json')) BOOKINGS = JSON.parse(fs.readFileSync('bookings.json','utf8')); } catch(e){}
 
