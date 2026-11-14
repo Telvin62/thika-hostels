@@ -39,6 +39,10 @@ app.post('/api/confirm', (req,res)=>{
   }
   res.json({error:'not found'});
 });
+app.get('/api/bookings', (req,res)=>{
+  if(req.query.pass !== 'Telvin62') return res.json({error:'Wrong password'});
+  res.json({bookings: BOOKINGS, vacancies: VACANCIES});
+});
 app.get('/bookings', (req,res)=>{
   res.send(`<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Owner - Bookings</title><style>body{font-family:sans-serif;background:#f6f6f6;padding:16px} .card{background:#fff;padding:20px;border-radius:16px;max-width:600px;margin:20px auto;box-shadow:0 2px 12px rgba(0,0,0,.1)} input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;box-sizing:border-box;margin:10px 0} button{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:bold} .logout{background:#e11d48} table{width:100%;border-collapse:collapse;background:#fff} th{background:#111;color:#fff;padding:10px} td{padding:10px;border-bottom:1px solid #eee} .top{display:flex;justify-content:space-between;align-items:center}</style></head><body>
   <div id="login" class="card"><h2>🔒 Owner Login</h2><p>Enter password to see bookings</p><input id="pass" type="password" placeholder="Password"><button onclick="doLogin()">Login</button><p id="err" style="color:red"></p></div>
