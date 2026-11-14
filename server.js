@@ -6,7 +6,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 let BOOKINGS = [];
-let VACANCIES = { "Sunrise": 9, "Green View": 9, "Sunset": 8, "Riverside": 12 };
+let VACANCIES = { "Sunrise": 50, "Green View": 48, "Sunset": 45, "Riverside": 47 };
 try { if(fs.existsSync('vacancies.json')) VACANCIES = JSON.parse(fs.readFileSync('vacancies.json','utf8')); } catch(e){}
 try { if(fs.existsSync('bookings.json')) BOOKINGS = JSON.parse(fs.readFileSync('bookings.json','utf8')); } catch(e){}
 
