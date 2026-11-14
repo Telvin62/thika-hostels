@@ -7,10 +7,15 @@ app.use(express.static('public'));
 
 let BOOKINGS = [];
 let VACANCIES = { "Sunrise": 50, "Green View": 48, "Sunset": 45, "Riverside": 47 };
+const PRICES = { "Sunrise": 5000, "Green View": 5500, "Sunset": 6000, "Riverside": 6500 };
 try { if(fs.existsSync('vacancies.json')) VACANCIES = JSON.parse(fs.readFileSync('vacancies.json','utf8')); } catch(e){}
 try { if(fs.existsSync('bookings.json')) BOOKINGS = JSON.parse(fs.readFileSync('bookings.json','utf8')); } catch(e){}
 
 app.post('/api/book', (req,res)=>{
+  let _h = req.body.hostel || req.body.Hostel || '';
+  let _rooms = parseInt(req.body.rooms || req.body.Rooms || 1) || 1;
+  req.body.price = (PRICES[_h] || 0) * _rooms;
+  req.body.amount = req.body.price;
   BOOKINGS.push(req.body);
   // Try to find hostel name in booking message and reduce vacancy
   let h = (req.body.hostel||'').toLowerCase();
