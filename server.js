@@ -98,7 +98,7 @@ async function confirmPay(i){
   }catch(e){ alert('Network error: '+e); }
 }
 
-function showBookings(d){ ALL_BOOKINGS = d.bookings||[]; window._lastVac = d.vacancies||{};
+function showBookings(d){ if(!(d.bookings||[])[0] || (d.bookings[0]._origIdx===undefined)) ALL_BOOKINGS = d.bookings||[]; window._lastVac = d.vacancies||{};
     document.getElementById('login').style.display='none'; document.getElementById('main').style.display='block';
     document.getElementById('vac').innerText = 'Vacancies: ' + JSON.stringify(d.vacancies||{});
     let rows = (d.bookings||[]).map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>'+(b.price||'')+'</td><td>'+(b.time||'')+'</td><td>'+(b.status||'PENDING')+'</td><td>'+(b.status==='PAID'?'✅ PAID':'<button onclick=confirmPay('+i+') style=width:auto;padding:6px>Confirm</button>' + '<button onclick="deleteBooking((b._origIdx!==undefined?b._origIdx:i), \''+ (b.msg||'').replace(/'/g,'') + '\')" style="width:auto;padding:6px;background:#dc3545;color:white;border:none;border-radius:6px;margin-left:5px">Delete</button>')+'</td></tr>').join('') || '<tr><td colspan=4 style="text-align:center">No bookings yet</td></tr>';
