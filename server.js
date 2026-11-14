@@ -60,4 +60,4 @@ app.get('/bookings', (req,res)=>{
   </script></body></html>`);
 });
 
-app.listen(PORT, ()=> console.log('Server on ' + PORT));
+app.listen(PORT, '0.0.0.0', ()=> console.log('Server on ' + PORT));

@@ -1,6 +1,6 @@
-<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thika Hostels</title><link rel="manifest" href="/manifest.json">
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thika Hostels</title>
 <meta name="theme-color" content="#0f766e">
-</head>
+<style id="style-c">body{background:#f0fdf4 !important;font-family:system-ui,Arial,sans-serif !important;margin:0 !important;padding:16px !important}h1{color:#16a34a !important;text-align:center !important}h2{color:#15803d !important}div:has(>h2){background:#fff !important;border-radius:20px !important;box-shadow:0 6px 20px rgba(0,0,0,0.08) !important;padding:14px !important;margin:0 0 18px !important;border:2px solid #bbf7d0 !important}button{background:#f97316 !important;color:#fff !important;border:none !important;border-radius:999px !important;padding:13px 20px !important;font-weight:800 !important;width:100% !important}input,select{border:2px solid #bbf7d0 !important;border-radius:12px !important;padding:11px !important;width:100% !important;box-sizing:border-box !important}img{border-radius:14px !important}</style><link rel="manifest" href="/manifest.json"><link rel="icon" href="/icon-512.png"><link rel="apple-touch-icon" href="/icon-512.png"><meta name="theme-color" content="#00C853"></head>
 <body style="font-family:sans-serif;background:#f6f6f6;margin:0;padding-bottom:80px">
 <h1 style="text-align:center;padding:20px 10px 0">🏠 Thika Hostels</h1>
 <p style="text-align:center;color:#555">Book your hostel in Thika - by Telvin Asher Abel</p>
@@ -124,4 +124,4 @@ document.addEventListener('click', async (e)=>{
 </script>
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}</script>
 <div style="text-align:center;padding:20px;font-size:12px;opacity:0.5"><a href="/bookings" style="color:#999;text-decoration:none">Owner Login</a></div>
-</body></html>
+<script>document.querySelectorAll("h2").forEach(h=>{let card=h.parentElement; if(!card||card.querySelector("img"))return; let txt=h.innerText.toLowerCase(); let f=null; if(txt.includes("sunrise"))f="sunrise.jpg"; else if(txt.includes("green"))f="greenview.jpg"; else if(txt.includes("budget"))f="budget.jpg"; else if(txt.includes("mku"))f="mku.jpg"; else if(txt.includes("gateway"))f="gateway.jpg"; else if(txt.includes("excel"))f="excel.jpg"; if(!f)return; let img=document.createElement("img"); img.src="/"+f; img.style.cssText="width:100%;height:180px;object-fit:cover;border-radius:10px;display:block;margin-bottom:10px"; card.prepend(img);});</script><script>document.querySelectorAll("div:has(>h2)").forEach(c=>{let imgs=c.querySelectorAll("img"); imgs.forEach((im,i)=>{if(i>0) im.remove()})})</script></body></html>
