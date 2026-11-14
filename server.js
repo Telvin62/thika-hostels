@@ -17,6 +17,7 @@ app.post('/api/book', (req,res)=>{
   req.body.price = (PRICES[_h] || 0) * _rooms;
   req.body.amount = req.body.price;
   req.body.time = new Date().toISOString();
+  req.body.status = 'PENDING';
   BOOKINGS.push(req.body);
   // Try to find hostel name in booking message and reduce vacancy
   let h = (req.body.hostel||'').toLowerCase();
@@ -28,6 +29,12 @@ app.post('/api/book', (req,res)=>{
 });
 
 app.get('/api/vacancies', (req,res)=> res.json(VACANCIES));
+app.post('/api/confirm', (req,res)=>{
+  if(req.query.pass !== 'Telvin62' && req.body.pass !== 'Telvin62') return res.json({error:'wrong password'});
+  let idx = req.body.idx;
+  if(BOOKINGS[idx]){ BOOKINGS[idx].status='PAID'; try{ fs.writeFileSync('bookings.json', JSON.stringify(BOOKINGS)); }catch(e){} return res.json({ok:true}); }
+  res.json({error:'not found'});
+});
 app.get('/api/bookings', (req,res)=>{ if(req.query.pass !== 'Telvin62') return res.json({error:'wrong password'}); res.json({bookings: BOOKINGS, vacancies: VACANCIES}); });
 app.get('/bookings', (req,res)=>{
   res.send(`<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Owner - Bookings</title><style>body{font-family:sans-serif;background:#f6f6f6;padding:16px} .card{background:#fff;padding:20px;border-radius:16px;max-width:600px;margin:20px auto;box-shadow:0 2px 12px rgba(0,0,0,.1)} input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;box-sizing:border-box;margin:10px 0} button{width:100%;padding:12px;background:#111;color:#fff;border:none;border-radius:10px;font-weight:bold} .logout{background:#e11d48} table{width:100%;border-collapse:collapse;background:#fff} th{background:#111;color:#fff;padding:10px} td{padding:10px;border-bottom:1px solid #eee} .top{display:flex;justify-content:space-between;align-items:center}</style></head><body>
@@ -44,8 +51,8 @@ app.get('/bookings', (req,res)=>{
   function showBookings(d){
     document.getElementById('login').style.display='none'; document.getElementById('main').style.display='block';
     document.getElementById('vac').innerText = 'Vacancies: ' + JSON.stringify(d.vacancies||{});
-    let rows = (d.bookings||[]).map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>'+(b.price||'')+'</td><td>'+(b.time||'')+'</td></tr>').join('') || '<tr><td colspan=4 style="text-align:center">No bookings yet</td></tr>';
-    document.getElementById('list').innerHTML = '<table><tr><th>#</th><th>Booking</th><th>Amount</th><th>Time</th></tr>'+rows+'</table>';
+    let rows = (d.bookings||[]).map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>'+(b.price||'')+'</td><td>'+(b.time||'')+'</td><td>'+(b.status||'PENDING')+'</td><td>'+(b.status==='PAID'?'✅ PAID':'<button onclick=confirmPay('+i+') style=width:auto;padding:6px>Confirm</button>')+'</td></tr>').join('') || '<tr><td colspan=4 style="text-align:center">No bookings yet</td></tr>';
+    document.getElementById('list').innerHTML = '<table><tr><th>#</th><th>Booking</th><th>Amount</th><th>Time</th><th>Status</th><th>Action</th></tr>'+rows+'</table>';
   }
   async function doLogout(){
     sessionStorage.removeItem('owner'); sessionStorage.removeItem('pass');
