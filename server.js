@@ -67,13 +67,7 @@ function doSearch(){
   // Re-use showBookings but with filtered list - keep vacancies from last load
   showBookings({bookings: filtered, vacancies: window._lastVac || {}});
 }
-async function deleteBooking(idx, name){
-  if(!confirm('Delete booking: ' + name + '? Vacancy will be restored.')) return;
-  const pass = sessionStorage.getItem('pass') || document.getElementById('pass')?.value || 'Telvin62';
-  const r = await fetch('/api/delete', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({idx, pass})});
-  const d = await r.json();
-  if(d.ok){ alert('Deleted'); doLogin(); } else alert(d.error||'Failed');
-}
+async function deleteBooking(idx){ if(!confirm('Delete this booking? Vacancy will be restored.')) return; const pass = sessionStorage.getItem('pass') || 'Telvin62'; const r = await fetch('/api/delete', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({idx, pass})}); const d = await r.json(); if(d.ok){ alert('Deleted'); doLogin(); } else alert(d.error||'Failed'); }
 function renderBookings(list){
   // This will be called by patched showBookings - fallback: reload
   if(window._origShowBookings) window._origShowBookings(list);
@@ -98,10 +92,10 @@ async function confirmPay(i){
   }catch(e){ alert('Network error: '+e); }
 }
 
-function showBookings(d){ if(!(d.bookings||[])[0] || (d.bookings[0]._origIdx===undefined)) ALL_BOOKINGS = d.bookings||[]; window._lastVac = d.vacancies||{};
+function showBookings(d){ if(!d.bookings || !d.bookings[0] || d.bookings[0]._origIdx===undefined) ALL_BOOKINGS = d.bookings||[]; window._lastVac = d.vacancies||{};
     document.getElementById('login').style.display='none'; document.getElementById('main').style.display='block';
     document.getElementById('vac').innerText = 'Vacancies: ' + JSON.stringify(d.vacancies||{});
-    let rows = (d.bookings||[]).map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>'+(b.price||'')+'</td><td>'+(b.time||'')+'</td><td>'+(b.status||'PENDING')+'</td><td>'+(b.status==='PAID'?'✅ PAID':'<button onclick=confirmPay('+i+') style=width:auto;padding:6px>Confirm</button>' + '<button onclick="deleteBooking((b._origIdx!==undefined?b._origIdx:i), \''+ (b.msg||'').replace(/'/g,'') + '\')" style="width:auto;padding:6px;background:#dc3545;color:white;border:none;border-radius:6px;margin-left:5px">Delete</button>')+'</td></tr>').join('') || '<tr><td colspan=4 style="text-align:center">No bookings yet</td></tr>';
+    let rows = (d.bookings||[]).map((b,i)=>'<tr><td>'+(i+1)+'</td><td>'+(b.msg||'')+'</td><td>'+(b.price||'')+'</td><td>'+(b.time||'')+'</td><td>'+(b.status||'PENDING')+'</td><td>'+(b.status==='PAID'?'✅ PAID':'<button onclick=confirmPay('+i+') style=width:auto;padding:6px>Confirm</button>' + '<button onclick=deleteBooking(' + (b._origIdx!==undefined?b._origIdx:i) + ') style="width:auto;padding:6px;background:#dc3545;color:white;border:none;border-radius:6px;margin-left:5px">Delete</button>')+'</td></tr>').join('') || '<tr><td colspan=4 style="text-align:center">No bookings yet</td></tr>';
     document.getElementById('list').innerHTML = '<table><tr><th>#</th><th>Booking</th><th>Amount</th><th>Time</th><th>Status</th><th>Action</th></tr>'+rows+'</table>';
   }
   async function doLogout(){
