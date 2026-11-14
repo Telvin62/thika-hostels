@@ -57,7 +57,7 @@ app.get('/bookings', (req,res)=>{
       let p = sessionStorage.getItem('pass'); let r = await fetch('/api/bookings?pass='+encodeURIComponent(p)); let d = await r.json(); if(!d.error) showBookings(d);
     }
   })();
-  </script></body></html>`);
+  </script><a href="https://wa.me/254769751803?text=Hi! I want to book a hostel in Thika" target="_blank" style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;text-decoration:none;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.3);">💬</a></body></html>`);
 });
 
 app.listen(PORT, '0.0.0.0', ()=> console.log('Server on ' + PORT));
