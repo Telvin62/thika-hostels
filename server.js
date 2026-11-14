@@ -16,6 +16,7 @@ app.post('/api/book', (req,res)=>{
   let _rooms = parseInt(req.body.rooms || req.body.Rooms || 1) || 1;
   req.body.price = (PRICES[_h] || 0) * _rooms;
   req.body.amount = req.body.price;
+  req.body.time = new Date().toISOString();
   BOOKINGS.push(req.body);
   // Try to find hostel name in booking message and reduce vacancy
   let h = (req.body.hostel||'').toLowerCase();
